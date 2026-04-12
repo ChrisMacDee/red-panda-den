@@ -20,9 +20,15 @@ npm-debug.log*
 
 # Docker
 infra/.env
+infra/authelia/secrets/
+infra/postgres/data/
 
 # Data volumes
 data/
+infra/data/
+
+# Vite
+.vite/
 
 # OS
 .DS_Store
