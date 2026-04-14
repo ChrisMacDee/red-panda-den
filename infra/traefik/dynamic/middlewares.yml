@@ -1,0 +1,57 @@
+http:
+  middlewares:
+
+    # ── Authelia forward auth ────────────────────────────────────────────────
+    authelia:
+      forwardAuth:
+        address: "http://authelia:9091/api/verify?rd=https://auth.redpandacreations.co.uk"
+        trustForwardHeader: true
+        authResponseHeaders:
+          - "Remote-User"
+          - "Remote-Groups"
+          - "Remote-Name"
+          - "Remote-Email"
+
+    # ── Security headers — PRIVATE services (includes noindex) ──────────────
+    security-headers-private:
+      headers:
+        customResponseHeaders:
+          X-Robots-Tag: "noindex, nofollow"
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        contentTypeNosniff: true
+        frameDeny: true
+        browserXssFilter: true
+        referrerPolicy: "strict-origin-when-cross-origin"
+        permissionsPolicy: "camera=(), microphone=(), geolocation=()"
+
+    # ── Security headers — PUBLIC services (no noindex — allow search indexing) ──
+    security-headers-public:
+      headers:
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        contentTypeNosniff: true
+        frameDeny: true
+        browserXssFilter: true
+        referrerPolicy: "strict-origin-when-cross-origin"
+        permissionsPolicy: "camera=(), microphone=(), geolocation=()"
+
+    # ── Rate limiting — standard ─────────────────────────────────────────────
+    rate-limit-standard:
+      rateLimit:
+        average: 100
+        burst: 50
+
+    # ── Rate limiting — aggressive (checkout endpoint) ───────────────────────
+    rate-limit-checkout:
+      rateLimit:
+        average: 10
+        burst: 5
+
+    # ── Strip /api prefix for dashboard API ──────────────────────────────────
+    strip-api-prefix:
+      stripPrefix:
+        prefixes:
+          - "/api"

@@ -1,0 +1,70 @@
+---
+theme: dark
+jwt_secret: "${AUTHELIA_JWT_SECRET}"
+
+server:
+  host: 0.0.0.0
+  port: 9091
+
+log:
+  level: info
+
+totp:
+  issuer: redpandacreations.co.uk
+  period: 30
+  skew: 1
+
+authentication_backend:
+  file:
+    path: /config/users_database.yml
+    password:
+      algorithm: argon2id
+      iterations: 3
+      memory: 65536
+      parallelism: 4
+      key_length: 32
+      salt_length: 16
+
+access_control:
+  default_policy: deny
+  rules:
+    # ── Authelia itself — never forward-auth itself ──────────────────────────
+    - domain: auth.redpandacreations.co.uk
+      policy: bypass
+
+    # ── Public: Ghost base domain (excluding /ghost admin) ──────────────────
+    - domain: redpandacreations.co.uk
+      resources:
+        - "^/ghost.*"
+      policy: one_factor
+
+    - domain: redpandacreations.co.uk
+      policy: bypass
+
+    # ── Public: Medusa storefront (excluding /app admin) ────────────────────
+    - domain: shop.redpandacreations.co.uk
+      resources:
+        - "^/app.*"
+      policy: one_factor
+
+    - domain: shop.redpandacreations.co.uk
+      policy: bypass
+
+    # ── Private: everything else requires one_factor ─────────────────────────
+    - domain: "*.redpandacreations.co.uk"
+      policy: one_factor
+
+session:
+  name: authelia_session
+  secret: "${AUTHELIA_SESSION_SECRET}"
+  expiration: 12h
+  inactivity: 2h
+  domain: redpandacreations.co.uk   # wildcard — covers all subdomains
+
+storage:
+  local:
+    path: /config/db.sqlite3
+
+notifier:
+  filesystem:
+    filename: /config/notification.txt

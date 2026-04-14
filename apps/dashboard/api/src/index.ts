@@ -1,6 +1,8 @@
 import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
+import { favouritesRouter } from './routes/favourites'
+import { healthRouter } from './routes/health'
 
 export const app = express()
 
@@ -8,9 +10,8 @@ app.use(helmet())
 app.use(cors())
 app.use(express.json())
 
-app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() })
-})
+app.use('/api/health', healthRouter)
+app.use('/api/favourites', favouritesRouter)
 
 if (process.env.NODE_ENV !== 'test') {
   const PORT = process.env.PORT ?? 3001

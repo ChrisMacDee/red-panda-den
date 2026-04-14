@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Dashboard Frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "apps/dashboard/frontend",
+      "port": 3000
+    },
+    {
+      "name": "Dashboard API",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "apps/dashboard/api",
+      "port": 3001
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+# Development overrides — use alongside docker-compose.yml:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+#
+# What this does:
+#   - Replaces built images with local source + hot-reload
+#   - Exposes Postgres port for local tooling (TablePlus, psql, etc.)
+#   - Removes Traefik/Authelia — access services directly on localhost ports
+#   - Disables Crowdsec and Watchtower
+
+name: red-panda-den
+
+services:
+
+  # ── Dashboard Frontend — Vite dev server ────────────────────────────────
+  dashboard-frontend:
+    build: ~
+    image: ~
+    command: npm run dev -- --host 0.0.0.0
+    working_dir: /app
+    volumes:
+      - ../apps/dashboard/frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+    labels:
+      traefik.enable: "false"
+
+  # ── Dashboard API — tsx watch ────────────────────────────────────────────
+  dashboard-api:
+    build: ~
+    image: ~
+    command: npm run dev
+    working_dir: /app
+    volumes:
+      - ../apps/dashboard/api:/app
+      - /app/node_modules
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+    labels:
+      traefik.enable: "false"
+
+  # ── PostgreSQL — expose port for local tooling ───────────────────────────
+  postgres:
+    ports:
+      - "5432:5432"
+
+  # ── Disable services not needed for local dev ────────────────────────────
+  traefik:
+    profiles: ["prod-only"]
+
+  authelia:
+    profiles: ["prod-only"]
+
+  crowdsec:
+    profiles: ["prod-only"]
+
+  crowdsec-bouncer:
+    profiles: ["prod-only"]
+
+  watchtower:
+    profiles: ["prod-only"]

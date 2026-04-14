@@ -1,0 +1,432 @@
+name: red-panda-den
+
+# ─── Shared labels helper ─────────────────────────────────────────────────────
+# Used throughout: traefik.enable=true puts the service on the proxy network.
+# All private services chain: authelia + security-headers-private middlewares.
+# Public services chain: security-headers-public only.
+
+x-authelia-middleware: &authelia-middleware
+  traefik.http.middlewares.authelia.forwardauth.address: "http://authelia:9091/api/verify?rd=https://auth.${BASE_DOMAIN}"
+  traefik.http.middlewares.authelia.forwardauth.trustforwardheader: "true"
+  traefik.http.middlewares.authelia.forwardauth.authresponseheaders: "Remote-User,Remote-Groups,Remote-Name,Remote-Email"
+
+services:
+
+  # ── Docker Socket Proxy ────────────────────────────────────────────────────
+  # Traefik reads Docker metadata via this proxy — no direct socket access.
+  docker-socket-proxy:
+    image: tecnativa/docker-socket-proxy:latest
+    restart: unless-stopped
+    environment:
+      CONTAINERS: 1
+      SERVICES: 0
+      TASKS: 0
+      NETWORKS: 0
+      VOLUMES: 0
+      INFO: 0
+      POST: 0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - socket-proxy
+
+  # ── Traefik ───────────────────────────────────────────────────────────────
+  traefik:
+    image: traefik:v3
+    restart: unless-stopped
+    depends_on:
+      - docker-socket-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/dynamic:/etc/traefik/dynamic:ro
+      - traefik_logs:/var/log/traefik
+    networks:
+      - proxy
+      - socket-proxy
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.traefik-dashboard.rule: "Host(`traefik.${BASE_DOMAIN}`)"
+      traefik.http.routers.traefik-dashboard.entrypoints: "websecure"
+      traefik.http.routers.traefik-dashboard.service: "api@internal"
+      traefik.http.routers.traefik-dashboard.middlewares: "authelia@file,security-headers-private@file"
+
+  # ── Authelia ──────────────────────────────────────────────────────────────
+  authelia:
+    image: authelia/authelia:latest
+    restart: unless-stopped
+    environment:
+      AUTHELIA_JWT_SECRET: ${AUTHELIA_JWT_SECRET}
+      AUTHELIA_SESSION_SECRET: ${AUTHELIA_SESSION_SECRET}
+    volumes:
+      - ./authelia:/config
+    networks:
+      - proxy
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.authelia.rule: "Host(`auth.${BASE_DOMAIN}`)"
+      traefik.http.routers.authelia.entrypoints: "websecure"
+      traefik.http.routers.authelia.middlewares: "security-headers-public@file"
+      traefik.http.services.authelia.loadbalancer.server.port: "9091"
+
+  # ── PostgreSQL ────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis ─────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Dashboard Frontend ────────────────────────────────────────────────────
+  dashboard-frontend:
+    build:
+      context: ../apps/dashboard/frontend
+      dockerfile: Dockerfile
+    image: red-panda-den/dashboard-frontend:latest
+    restart: unless-stopped
+    networks:
+      - proxy
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.dashboard.rule: "Host(`life.${BASE_DOMAIN}`)"
+      traefik.http.routers.dashboard.entrypoints: "websecure"
+      traefik.http.routers.dashboard.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.services.dashboard.loadbalancer.server.port: "80"
+
+  # ── Dashboard API ─────────────────────────────────────────────────────────
+  dashboard-api:
+    build:
+      context: ../apps/dashboard/api
+      dockerfile: Dockerfile
+    image: red-panda-den/dashboard-api:latest
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL}
+      NTFY_BASE_URL: ${NTFY_BASE_URL}
+      NTFY_MEDICATION_TOPIC: ${NTFY_MEDICATION_TOPIC}
+      NTFY_DEPLOY_TOPIC: ${NTFY_DEPLOY_TOPIC}
+      PORT: 3001
+    networks:
+      - proxy
+      - internal
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.dashboard-api.rule: "Host(`life.${BASE_DOMAIN}`) && PathPrefix(`/api`)"
+      traefik.http.routers.dashboard-api.entrypoints: "websecure"
+      traefik.http.routers.dashboard-api.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.services.dashboard-api.loadbalancer.server.port: "3001"
+
+  # ── Ghost Blog ────────────────────────────────────────────────────────────
+  ghost:
+    image: ghost:5-alpine
+    restart: unless-stopped
+    environment:
+      url: "https://${BASE_DOMAIN}"
+      NODE_ENV: production
+      database__client: sqlite3
+      database__connection__filename: /var/lib/ghost/content/data/ghost.db
+      mail__transport: ${GHOST_MAIL_TRANSPORT:-SMTP}
+      mail__options__host: ${GHOST_MAIL_HOST:-localhost}
+      mail__options__port: ${GHOST_MAIL_PORT:-587}
+      mail__options__auth__user: ${GHOST_MAIL_USER:-}
+      mail__options__auth__pass: ${GHOST_MAIL_PASSWORD:-}
+      mail__from: ${GHOST_MAIL_FROM:-noreply@redpandacreations.co.uk}
+    volumes:
+      - ghost_content:/var/lib/ghost/content
+    networks:
+      - proxy
+    labels:
+      traefik.enable: "true"
+      # Public: base domain without /ghost
+      traefik.http.routers.ghost-public.rule: "Host(`${BASE_DOMAIN}`) && !PathPrefix(`/ghost`)"
+      traefik.http.routers.ghost-public.entrypoints: "websecure"
+      traefik.http.routers.ghost-public.middlewares: "security-headers-public@file"
+      traefik.http.routers.ghost-public.priority: "10"
+      traefik.http.services.ghost.loadbalancer.server.port: "2368"
+      # Protected: /ghost admin path
+      traefik.http.routers.ghost-admin.rule: "Host(`${BASE_DOMAIN}`) && PathPrefix(`/ghost`)"
+      traefik.http.routers.ghost-admin.entrypoints: "websecure"
+      traefik.http.routers.ghost-admin.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.routers.ghost-admin.priority: "20"
+
+  # ── Medusa Server ─────────────────────────────────────────────────────────
+  # Profile: "medusa" — not started by default (Phase 11)
+  medusa-server:
+    profiles: ["medusa"]
+    image: medusajs/medusa:latest
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: ${MEDUSA_DB_URL}
+      REDIS_URL: ${REDIS_URL}
+      JWT_SECRET: ${MEDUSA_JWT_SECRET}
+      COOKIE_SECRET: ${MEDUSA_COOKIE_SECRET}
+      ADMIN_CORS: ${MEDUSA_ADMIN_CORS}
+      STORE_CORS: ${MEDUSA_STORE_CORS}
+      AUTH_CORS: ${MEDUSA_AUTH_CORS}
+      NODE_ENV: production
+    networks:
+      - proxy
+      - internal
+    labels:
+      traefik.enable: "true"
+      # Public: storefront API
+      traefik.http.routers.medusa-api.rule: "Host(`shop.${BASE_DOMAIN}`) && PathPrefix(`/api`)"
+      traefik.http.routers.medusa-api.entrypoints: "websecure"
+      traefik.http.routers.medusa-api.middlewares: "security-headers-public@file,rate-limit-standard@file"
+      traefik.http.routers.medusa-api.priority: "30"
+      traefik.http.services.medusa-server.loadbalancer.server.port: "9000"
+      # Checkout — stricter rate limit
+      traefik.http.routers.medusa-checkout.rule: "Host(`shop.${BASE_DOMAIN}`) && PathPrefix(`/api/store/carts`) && Method(`POST`)"
+      traefik.http.routers.medusa-checkout.entrypoints: "websecure"
+      traefik.http.routers.medusa-checkout.middlewares: "security-headers-public@file,rate-limit-checkout@file"
+      traefik.http.routers.medusa-checkout.priority: "40"
+      # Protected: Medusa admin
+      traefik.http.routers.medusa-admin.rule: "Host(`shop.${BASE_DOMAIN}`) && PathPrefix(`/app`)"
+      traefik.http.routers.medusa-admin.entrypoints: "websecure"
+      traefik.http.routers.medusa-admin.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.routers.medusa-admin.priority: "20"
+
+  # ── Medusa Storefront ─────────────────────────────────────────────────────
+  # Profile: "medusa" — not started by default (Phase 11, Dockerfile not yet created)
+  medusa-storefront:
+    profiles: ["medusa"]
+    build:
+      context: ../apps/storefront
+      dockerfile: Dockerfile
+    image: red-panda-den/storefront:latest
+    restart: unless-stopped
+    networks:
+      - proxy
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.storefront.rule: "Host(`shop.${BASE_DOMAIN}`)"
+      traefik.http.routers.storefront.entrypoints: "websecure"
+      traefik.http.routers.storefront.middlewares: "security-headers-public@file,rate-limit-standard@file"
+      traefik.http.routers.storefront.priority: "10"
+      traefik.http.services.medusa-storefront.loadbalancer.server.port: "80"
+
+  # ── Mealie ────────────────────────────────────────────────────────────────
+  mealie:
+    image: ghcr.io/mealie-recipes/mealie:latest
+    restart: unless-stopped
+    environment:
+      ALLOW_SIGNUP: "false"
+      BASE_URL: "https://meals.${BASE_DOMAIN}"
+    volumes:
+      - mealie_data:/app/data
+    networks:
+      - proxy
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.mealie.rule: "Host(`meals.${BASE_DOMAIN}`)"
+      traefik.http.routers.mealie.entrypoints: "websecure"
+      traefik.http.routers.mealie.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.services.mealie.loadbalancer.server.port: "9000"
+
+  # ── Actual Budget ─────────────────────────────────────────────────────────
+  actual:
+    image: actualbudget/actual-server:latest
+    restart: unless-stopped
+    volumes:
+      - actual_data:/data
+    networks:
+      - proxy
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.actual.rule: "Host(`money.${BASE_DOMAIN}`)"
+      traefik.http.routers.actual.entrypoints: "websecure"
+      traefik.http.routers.actual.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.services.actual.loadbalancer.server.port: "5006"
+
+  # ── Vikunja ───────────────────────────────────────────────────────────────
+  vikunja:
+    image: vikunja/vikunja:latest
+    restart: unless-stopped
+    environment:
+      VIKUNJA_SERVICE_PUBLICURL: "https://tasks.${BASE_DOMAIN}"
+    volumes:
+      - vikunja_data:/app/vikunja/files
+    networks:
+      - proxy
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.vikunja.rule: "Host(`tasks.${BASE_DOMAIN}`)"
+      traefik.http.routers.vikunja.entrypoints: "websecure"
+      traefik.http.routers.vikunja.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.services.vikunja.loadbalancer.server.port: "3456"
+
+  # ── Wiki.js ───────────────────────────────────────────────────────────────
+  wikijs:
+    image: ghcr.io/requarks/wiki:2
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_TYPE: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER}
+      DB_PASS: ${POSTGRES_PASSWORD}
+      DB_NAME: wikijs
+    networks:
+      - proxy
+      - internal
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.wikijs.rule: "Host(`wiki.${BASE_DOMAIN}`)"
+      traefik.http.routers.wikijs.entrypoints: "websecure"
+      traefik.http.routers.wikijs.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.services.wikijs.loadbalancer.server.port: "3000"
+
+  # ── Ntfy ──────────────────────────────────────────────────────────────────
+  ntfy:
+    image: binwiederhier/ntfy:latest
+    restart: unless-stopped
+    command: serve
+    volumes:
+      - ntfy_data:/var/lib/ntfy
+    networks:
+      - proxy
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.ntfy.rule: "Host(`ntfy.${BASE_DOMAIN}`)"
+      traefik.http.routers.ntfy.entrypoints: "websecure"
+      traefik.http.routers.ntfy.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.services.ntfy.loadbalancer.server.port: "80"
+
+  # ── Uptime Kuma ───────────────────────────────────────────────────────────
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    restart: unless-stopped
+    volumes:
+      - uptime_kuma_data:/app/data
+    networks:
+      - proxy
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.uptime-kuma.rule: "Host(`status.${BASE_DOMAIN}`)"
+      traefik.http.routers.uptime-kuma.entrypoints: "websecure"
+      traefik.http.routers.uptime-kuma.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.services.uptime-kuma.loadbalancer.server.port: "3001"
+
+  # ── Dozzle ────────────────────────────────────────────────────────────────
+  dozzle:
+    image: amir20/dozzle:latest
+    restart: unless-stopped
+    environment:
+      DOZZLE_REMOTE_AGENT: "docker-socket-proxy:2375"
+    networks:
+      - proxy
+      - socket-proxy
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.dozzle.rule: "Host(`logs.${BASE_DOMAIN}`)"
+      traefik.http.routers.dozzle.entrypoints: "websecure"
+      traefik.http.routers.dozzle.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.services.dozzle.loadbalancer.server.port: "8080"
+
+  # ── Watchtower ────────────────────────────────────────────────────────────
+  # Monitor-only mode — never auto-updates, just notifies via Ntfy.
+  watchtower:
+    image: containrrr/watchtower:latest
+    restart: unless-stopped
+    command: --monitor-only --notification-url "generic+https://ntfy.${BASE_DOMAIN}/${NTFY_DEPLOY_TOPIC}" --schedule "0 0 4 * * *"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - internal
+
+  # ── CrowdSec ──────────────────────────────────────────────────────────────
+  # Profile: "security" — not started by default (Phase 9)
+  crowdsec:
+    profiles: ["security"]
+    image: crowdsecurity/crowdsec:latest
+    restart: unless-stopped
+    environment:
+      COLLECTIONS: "crowdsecurity/traefik crowdsecurity/http-cve"
+    volumes:
+      - crowdsec_config:/etc/crowdsec
+      - crowdsec_data:/var/lib/crowdsec/data
+      - traefik_logs:/var/log/traefik:ro
+    networks:
+      - internal
+
+  # ── CrowdSec Bouncer ──────────────────────────────────────────────────────
+  # Profile: "security" — not started by default (Phase 9)
+  crowdsec-bouncer:
+    profiles: ["security"]
+    image: fbonalair/traefik-crowdsec-bouncer:latest
+    restart: unless-stopped
+    environment:
+      CROWDSEC_BOUNCER_API_KEY: ${CROWDSEC_BOUNCER_API_KEY}
+      CROWDSEC_AGENT_HOST: crowdsec:8080
+    networks:
+      - proxy
+      - internal
+
+
+# ─── Networks ─────────────────────────────────────────────────────────────────
+networks:
+  proxy:
+    name: proxy
+    driver: bridge
+  internal:
+    name: internal
+    driver: bridge
+    internal: true
+  socket-proxy:
+    name: socket-proxy
+    driver: bridge
+    internal: true
+
+
+# ─── Volumes ──────────────────────────────────────────────────────────────────
+volumes:
+  postgres_data:
+  redis_data:
+  ghost_content:
+  mealie_data:
+  actual_data:
+  vikunja_data:
+  ntfy_data:
+  uptime_kuma_data:
+  crowdsec_config:
+  crowdsec_data:
+  traefik_logs:

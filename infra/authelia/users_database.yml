@@ -1,0 +1,14 @@
+---
+# To generate a new password hash:
+#   docker run --rm authelia/authelia:latest authelia crypto hash generate argon2 --password 'yourpassword'
+# Then replace the hash below.
+
+users:
+  chris:
+    disabled: false
+    displayname: "Chris"
+    # Placeholder hash — MUST be replaced before deploying
+    password: "$argon2id$v=19$m=65536,t=3,p=4$zl2BnM62JE8t8SlERJRQBg$W1fVq3vTGv9ATubhzwV84oPJxK+RUdyDHwddPAQ6mXg"
+    email: chris@redpandacreations.co.uk
+    groups:
+      - admins

@@ -1,0 +1,7 @@
+# YAMS media stack — file provider routes (Option B: no YAMS compose changes)
+# Replace 192.168.x.x with your Pi's local IP or the YAMS container gateway IP.
+# Populated in Phase 8.
+
+http:
+  routers: {}
+  services: {}
