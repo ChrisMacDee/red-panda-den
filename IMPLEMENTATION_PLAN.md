@@ -170,7 +170,7 @@ This document is a step-by-step build guide. Work through each phase sequentiall
    - Custom `MantineProvider` theme object as defined in CLAUDE.md (Branding & Design Direction section)
    - Implement dark/light mode toggle using Mantine's `useMantineColorScheme` and `ColorSchemeScript`
    - Dark mode as default, preference persisted in localStorage
-   - Colour palette: crimson red (`#C41E3A`) accent on near-black (`#0C0C0C`) background (dark), off-white (`#FAFAFA`) background (light)
+   - Colour palette: crimson red (`#C2162E`) accent on near-black (`#0C0C0C`) background (dark), off-white (`#FAFAFA`) background (light)
    - Custom `red-panda` colour swatch in theme (10 shades as defined in CLAUDE.md)
    - Typography: JetBrains Mono (for data/stats), Plus Jakarta Sans (for UI)
    - Import fonts via Google Fonts in `index.html`
