@@ -247,13 +247,13 @@ Logo at `apps/dashboard/frontend/public/logo.png` — crimson red, white, black 
 Dark Mode (default):
   bg-primary:      #0C0C0C    bg-secondary:   #1A1A1A    bg-tertiary:  #242424
   border:          #333333    text-primary:   #F5F5F5    text-muted:   #A0A0A0
-  accent:          #C41E3A    accent-hover:   #D4374F    accent-muted: #3D1520
-  success:         #2D8B4E    warning:        #D4A843    danger:       #C41E3A
+  accent:          #C2162E    accent-hover:   #D4374F    accent-muted: #3D1520
+  success:         #2D8B4E    warning:        #D4A843    danger:       #C2162E
 
 Light Mode:
   bg-primary:      #FAFAFA    bg-secondary:   #FFFFFF    bg-tertiary:  #F0F0F0
   border:          #E0E0E0    text-primary:   #1A1A1A    text-muted:   #666666
-  accent:          #B01830    accent-hover:   #C41E3A    accent-muted: #FDE8EC
+  accent:          #B01830    accent-hover:   #C2162E    accent-muted: #FDE8EC
   success:         #2D8B4E    warning:        #C49A20    danger:       #B01830
 ```
 
@@ -270,7 +270,7 @@ const theme = createTheme({
   colors: {
     'red-panda': [
       '#FDE8EC', '#F9C2CC', '#F09AAA', '#E57185', '#D4374F',
-      '#C41E3A', '#B01830', '#8E1327', '#6C0E1E', '#3D1520',
+      '#C2162E', '#B01830', '#8E1327', '#6C0E1E', '#3D1520',
     ],
   },
   fontFamily: '"Plus Jakarta Sans", sans-serif',

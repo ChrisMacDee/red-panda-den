@@ -20,7 +20,7 @@ const LIBRARY_ICONS: Array<{ name: string; icon: LucideIcon }> = [
 ]
 
 const ACCENT_SWATCHES = [
-  '#C41E3A', '#2D8B4E', '#D4A843', '#3B82F6',
+  '#C2162E', '#2D8B4E', '#D4A843', '#3B82F6',
   '#8B5CF6', '#EC4899', '#F97316', '#06B6D4',
 ]
 
