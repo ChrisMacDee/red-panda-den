@@ -58,7 +58,7 @@ Theme is defined in `src/theme.ts`. Key values:
 | Token | Dark | Light |
 |-------|------|-------|
 | Background | `#0C0C0C` | `#FAFAFA` |
-| Accent | `#C41E3A` | `#B01830` |
+| Accent | `#C2162E` | `#B01830` |
 | Text | `#F5F5F5` | `#1A1A1A` |
 | Muted text | `#A0A0A0` | `#666666` |
 

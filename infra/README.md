@@ -124,6 +124,42 @@ See `.env.example` for the full list with descriptions. Key variables:
 | `AUTHELIA_SESSION_SECRET` | Authelia |
 | `CROWDSEC_BOUNCER_API_KEY` | CrowdSec bouncer (profile: security) |
 
+## Traefik Dynamic Config
+
+`traefik/dynamic/` contains config loaded at runtime without restarting Traefik:
+
+| File | Purpose |
+|------|---------|
+| `middlewares.yml` | Defines `authelia` (forwardAuth) and security header chains used by all services |
+| `yams.yml` | Routes for the YAMS media stack (Jellyfin, Sonarr, Radarr, etc.) — **do not modify the YAMS docker-compose itself** |
+
+## First-Time Pi Setup
+
+On a fresh Raspberry Pi 5:
+
+```bash
+# 1. Run the setup script (installs Docker, creates dirs, configures firewall)
+bash scripts/setup-pi.sh
+
+# 2. Copy and populate env vars
+cp infra/.env.example infra/.env
+
+# 3. Generate your Authelia password hash
+docker run authelia/authelia:latest authelia crypto hash --password 'yourpassword'
+# Paste the output into infra/authelia/users_database.yml
+
+# 4. Start the stack
+cd infra && docker compose up -d
+```
+
+## Backups
+
+```bash
+bash scripts/backup.sh   # Encrypted dump of Postgres + /data/uploads → ~/backups/
+```
+
+Runs automatically via cron — see `scripts/setup-pi.sh` for the cron entry. Backups are encrypted with GPG before being written to disk.
+
 ## Scripts
 
 From the repo root:
