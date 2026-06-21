@@ -11,6 +11,9 @@ interface ServiceDefinition {
 
 function buildServiceList(): ServiceDefinition[] {
   const base = process.env.BASE_DOMAIN ?? 'redpandacreations.co.uk'
+  // YAMS services run on the host; probe via host.docker.internal for a fast
+  // local check rather than round-tripping through Cloudflare.
+  const yams = process.env.YAMS_HOST ?? 'host.docker.internal'
 
   return [
     { name: 'Mealie', url: `https://meals.${base}` },
@@ -18,12 +21,15 @@ function buildServiceList(): ServiceDefinition[] {
     { name: 'Vikunja', url: `https://tasks.${base}` },
     { name: 'Wiki.js', url: `https://wiki.${base}` },
     { name: 'Ntfy', url: `https://ntfy.${base}` },
-    { name: 'Jellyfin', url: `https://jellyfin.${base}` },
-    { name: 'Sonarr', url: `https://sonarr.${base}` },
-    { name: 'Radarr', url: `https://radarr.${base}` },
-    { name: 'Prowlarr', url: `https://prowlarr.${base}` },
     { name: 'Uptime Kuma', url: `https://status.${base}` },
     { name: 'Dozzle', url: `https://logs.${base}` },
+    // YAMS media stack — probed directly on local ports
+    { name: 'Jellyfin', url: `http://${yams}:8096` },
+    { name: 'Sonarr', url: `http://${yams}:8989` },
+    { name: 'Radarr', url: `http://${yams}:7878` },
+    { name: 'Prowlarr', url: `http://${yams}:9696` },
+    { name: 'Jellyseerr', url: `http://${yams}:5055` },
+    { name: 'qBittorrent', url: `http://${yams}:8080` },
   ]
 }
 
