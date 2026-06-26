@@ -1,0 +1,21 @@
+# Cloudflare Tunnel configuration for Red Panda Den
+#
+# Setup (run once on the Pi as the deploy user):
+#   cloudflared tunnel login
+#   cloudflared tunnel create red-panda-den
+#   cp infra/cloudflare/config.yml ~/.cloudflared/config.yml
+#   Fill in TUNNEL_ID below (shown by the create command)
+#   cloudflared tunnel route dns red-panda-den redpandacreations.co.uk
+#   cloudflared tunnel route dns red-panda-den '*.redpandacreations.co.uk'
+#
+# Run as a systemd service:
+#   cloudflared service install
+#   systemctl enable --now cloudflared
+
+tunnel: <TUNNEL_ID>
+credentials-file: /home/pi/.cloudflared/<TUNNEL_ID>.json
+
+# All traffic routes to Traefik; Traefik handles subdomain routing and TLS.
+# Cloudflare handles TLS termination externally — Traefik receives plain HTTP.
+ingress:
+  - service: http://localhost:80
