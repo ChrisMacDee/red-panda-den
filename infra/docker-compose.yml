@@ -53,7 +53,7 @@ services:
       traefik.http.routers.traefik-dashboard.rule: "Host(`traefik.${BASE_DOMAIN}`)"
       traefik.http.routers.traefik-dashboard.entrypoints: "websecure"
       traefik.http.routers.traefik-dashboard.service: "api@internal"
-      traefik.http.routers.traefik-dashboard.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.routers.traefik-dashboard.middlewares: "crowdsec-bouncer@file,authelia@file,security-headers-private@file"
 
   # ── Authelia ──────────────────────────────────────────────────────────────
   authelia:
@@ -70,7 +70,7 @@ services:
       traefik.enable: "true"
       traefik.http.routers.authelia.rule: "Host(`auth.${BASE_DOMAIN}`)"
       traefik.http.routers.authelia.entrypoints: "websecure"
-      traefik.http.routers.authelia.middlewares: "security-headers-public@file"
+      traefik.http.routers.authelia.middlewares: "crowdsec-bouncer@file,security-headers-public@file"
       traefik.http.services.authelia.loadbalancer.server.port: "9091"
 
   # ── PostgreSQL ────────────────────────────────────────────────────────────
@@ -119,7 +119,7 @@ services:
       traefik.enable: "true"
       traefik.http.routers.dashboard.rule: "Host(`life.${BASE_DOMAIN}`)"
       traefik.http.routers.dashboard.entrypoints: "websecure"
-      traefik.http.routers.dashboard.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.routers.dashboard.middlewares: "crowdsec-bouncer@file,authelia@file,security-headers-private@file"
       traefik.http.services.dashboard.loadbalancer.server.port: "80"
 
   # ── Dashboard API ─────────────────────────────────────────────────────────
@@ -146,7 +146,7 @@ services:
       traefik.enable: "true"
       traefik.http.routers.dashboard-api.rule: "Host(`life.${BASE_DOMAIN}`) && PathPrefix(`/api`)"
       traefik.http.routers.dashboard-api.entrypoints: "websecure"
-      traefik.http.routers.dashboard-api.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.routers.dashboard-api.middlewares: "crowdsec-bouncer@file,authelia@file,security-headers-private@file"
       traefik.http.services.dashboard-api.loadbalancer.server.port: "3001"
 
   # ── Ghost Blog ────────────────────────────────────────────────────────────
@@ -173,13 +173,13 @@ services:
       # Public: base domain without /ghost
       traefik.http.routers.ghost-public.rule: "Host(`${BASE_DOMAIN}`) && !PathPrefix(`/ghost`)"
       traefik.http.routers.ghost-public.entrypoints: "websecure"
-      traefik.http.routers.ghost-public.middlewares: "security-headers-public@file"
+      traefik.http.routers.ghost-public.middlewares: "crowdsec-bouncer@file,security-headers-public@file"
       traefik.http.routers.ghost-public.priority: "10"
       traefik.http.services.ghost.loadbalancer.server.port: "2368"
       # Protected: /ghost admin path
       traefik.http.routers.ghost-admin.rule: "Host(`${BASE_DOMAIN}`) && PathPrefix(`/ghost`)"
       traefik.http.routers.ghost-admin.entrypoints: "websecure"
-      traefik.http.routers.ghost-admin.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.routers.ghost-admin.middlewares: "crowdsec-bouncer@file,authelia@file,security-headers-private@file"
       traefik.http.routers.ghost-admin.priority: "20"
 
   # ── Medusa Server ─────────────────────────────────────────────────────────
@@ -210,18 +210,18 @@ services:
       # Public: storefront API
       traefik.http.routers.medusa-api.rule: "Host(`shop.${BASE_DOMAIN}`) && PathPrefix(`/api`)"
       traefik.http.routers.medusa-api.entrypoints: "websecure"
-      traefik.http.routers.medusa-api.middlewares: "security-headers-public@file,rate-limit-standard@file"
+      traefik.http.routers.medusa-api.middlewares: "crowdsec-bouncer@file,security-headers-public@file,rate-limit-standard@file"
       traefik.http.routers.medusa-api.priority: "30"
       traefik.http.services.medusa-server.loadbalancer.server.port: "9000"
       # Checkout — stricter rate limit
       traefik.http.routers.medusa-checkout.rule: "Host(`shop.${BASE_DOMAIN}`) && PathPrefix(`/api/store/carts`) && Method(`POST`)"
       traefik.http.routers.medusa-checkout.entrypoints: "websecure"
-      traefik.http.routers.medusa-checkout.middlewares: "security-headers-public@file,rate-limit-checkout@file"
+      traefik.http.routers.medusa-checkout.middlewares: "crowdsec-bouncer@file,security-headers-public@file,rate-limit-checkout@file"
       traefik.http.routers.medusa-checkout.priority: "40"
       # Protected: Medusa admin
       traefik.http.routers.medusa-admin.rule: "Host(`shop.${BASE_DOMAIN}`) && PathPrefix(`/app`)"
       traefik.http.routers.medusa-admin.entrypoints: "websecure"
-      traefik.http.routers.medusa-admin.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.routers.medusa-admin.middlewares: "crowdsec-bouncer@file,authelia@file,security-headers-private@file"
       traefik.http.routers.medusa-admin.priority: "20"
 
   # ── Medusa Storefront ─────────────────────────────────────────────────────
@@ -239,7 +239,7 @@ services:
       traefik.enable: "true"
       traefik.http.routers.storefront.rule: "Host(`shop.${BASE_DOMAIN}`)"
       traefik.http.routers.storefront.entrypoints: "websecure"
-      traefik.http.routers.storefront.middlewares: "security-headers-public@file,rate-limit-standard@file"
+      traefik.http.routers.storefront.middlewares: "crowdsec-bouncer@file,security-headers-public@file,rate-limit-standard@file"
       traefik.http.routers.storefront.priority: "10"
       traefik.http.services.medusa-storefront.loadbalancer.server.port: "80"
 
@@ -258,7 +258,7 @@ services:
       traefik.enable: "true"
       traefik.http.routers.mealie.rule: "Host(`meals.${BASE_DOMAIN}`)"
       traefik.http.routers.mealie.entrypoints: "websecure"
-      traefik.http.routers.mealie.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.routers.mealie.middlewares: "crowdsec-bouncer@file,authelia@file,security-headers-private@file"
       traefik.http.services.mealie.loadbalancer.server.port: "9000"
 
   # ── Actual Budget ─────────────────────────────────────────────────────────
@@ -273,7 +273,7 @@ services:
       traefik.enable: "true"
       traefik.http.routers.actual.rule: "Host(`money.${BASE_DOMAIN}`)"
       traefik.http.routers.actual.entrypoints: "websecure"
-      traefik.http.routers.actual.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.routers.actual.middlewares: "crowdsec-bouncer@file,authelia@file,security-headers-private@file"
       traefik.http.services.actual.loadbalancer.server.port: "5006"
 
   # ── Vikunja ───────────────────────────────────────────────────────────────
@@ -290,7 +290,7 @@ services:
       traefik.enable: "true"
       traefik.http.routers.vikunja.rule: "Host(`tasks.${BASE_DOMAIN}`)"
       traefik.http.routers.vikunja.entrypoints: "websecure"
-      traefik.http.routers.vikunja.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.routers.vikunja.middlewares: "crowdsec-bouncer@file,authelia@file,security-headers-private@file"
       traefik.http.services.vikunja.loadbalancer.server.port: "3456"
 
   # ── Wiki.js ───────────────────────────────────────────────────────────────
@@ -314,7 +314,7 @@ services:
       traefik.enable: "true"
       traefik.http.routers.wikijs.rule: "Host(`wiki.${BASE_DOMAIN}`)"
       traefik.http.routers.wikijs.entrypoints: "websecure"
-      traefik.http.routers.wikijs.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.routers.wikijs.middlewares: "crowdsec-bouncer@file,authelia@file,security-headers-private@file"
       traefik.http.services.wikijs.loadbalancer.server.port: "3000"
 
   # ── Ntfy ──────────────────────────────────────────────────────────────────
@@ -330,7 +330,7 @@ services:
       traefik.enable: "true"
       traefik.http.routers.ntfy.rule: "Host(`ntfy.${BASE_DOMAIN}`)"
       traefik.http.routers.ntfy.entrypoints: "websecure"
-      traefik.http.routers.ntfy.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.routers.ntfy.middlewares: "crowdsec-bouncer@file,authelia@file,security-headers-private@file"
       traefik.http.services.ntfy.loadbalancer.server.port: "80"
 
   # ── Uptime Kuma ───────────────────────────────────────────────────────────
@@ -345,7 +345,7 @@ services:
       traefik.enable: "true"
       traefik.http.routers.uptime-kuma.rule: "Host(`status.${BASE_DOMAIN}`)"
       traefik.http.routers.uptime-kuma.entrypoints: "websecure"
-      traefik.http.routers.uptime-kuma.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.routers.uptime-kuma.middlewares: "crowdsec-bouncer@file,authelia@file,security-headers-private@file"
       traefik.http.services.uptime-kuma.loadbalancer.server.port: "3001"
 
   # ── Dozzle ────────────────────────────────────────────────────────────────
@@ -361,7 +361,7 @@ services:
       traefik.enable: "true"
       traefik.http.routers.dozzle.rule: "Host(`logs.${BASE_DOMAIN}`)"
       traefik.http.routers.dozzle.entrypoints: "websecure"
-      traefik.http.routers.dozzle.middlewares: "authelia@file,security-headers-private@file"
+      traefik.http.routers.dozzle.middlewares: "crowdsec-bouncer@file,authelia@file,security-headers-private@file"
       traefik.http.services.dozzle.loadbalancer.server.port: "8080"
 
   # ── Watchtower ────────────────────────────────────────────────────────────
@@ -376,9 +376,7 @@ services:
       - internal
 
   # ── CrowdSec ──────────────────────────────────────────────────────────────
-  # Profile: "security" — not started by default (Phase 9)
   crowdsec:
-    profiles: ["security"]
     image: crowdsecurity/crowdsec:latest
     restart: unless-stopped
     environment:
@@ -387,15 +385,19 @@ services:
       - crowdsec_config:/etc/crowdsec
       - crowdsec_data:/var/lib/crowdsec/data
       - traefik_logs:/var/log/traefik:ro
+      - ./crowdsec/acquis.yml:/etc/crowdsec/acquis.d/traefik.yml:ro
     networks:
       - internal
 
   # ── CrowdSec Bouncer ──────────────────────────────────────────────────────
-  # Profile: "security" — not started by default (Phase 9)
+  # Generate the API key after first start:
+  #   docker compose exec crowdsec cscli bouncers add traefik-bouncer
+  # Copy the printed key into infra/.env as CROWDSEC_BOUNCER_API_KEY, then restart.
   crowdsec-bouncer:
-    profiles: ["security"]
     image: fbonalair/traefik-crowdsec-bouncer:latest
     restart: unless-stopped
+    depends_on:
+      - crowdsec
     environment:
       CROWDSEC_BOUNCER_API_KEY: ${CROWDSEC_BOUNCER_API_KEY}
       CROWDSEC_AGENT_HOST: crowdsec:8080
