@@ -1,4 +1,4 @@
-import { UnstyledButton, Stack, Text } from '@mantine/core'
+import { UnstyledButton, Text } from '@mantine/core'
 import { useMatch, useNavigate } from 'react-router-dom'
 import type { LucideIcon } from 'lucide-react'
 
