@@ -46,6 +46,8 @@ services:
     networks:
       - proxy
       - socket-proxy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     labels:
       traefik.enable: "true"
       traefik.http.routers.traefik-dashboard.rule: "Host(`traefik.${BASE_DOMAIN}`)"

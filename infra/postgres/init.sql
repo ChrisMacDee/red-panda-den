@@ -90,6 +90,7 @@ CREATE TABLE IF NOT EXISTS medication.medications (
     name        TEXT NOT NULL,
     dosage      TEXT NOT NULL,
     frequency   TEXT NOT NULL,
+    doses_per_day INTEGER NOT NULL DEFAULT 1,
     person      TEXT NOT NULL,
     prescriber  TEXT,
     pharmacy    TEXT,

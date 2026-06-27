@@ -1,7 +1,115 @@
-# YAMS media stack — file provider routes (Option B: no YAMS compose changes)
-# Replace 192.168.x.x with your Pi's local IP or the YAMS container gateway IP.
-# Populated in Phase 8.
+# YAMS media stack — Traefik file-provider routes
+#
+# YAMS runs in its own docker-compose (typically at /opt/yams on the Pi).
+# We proxy to it via host.docker.internal so we never modify the YAMS compose file.
+# Traefik must have `extra_hosts: ["host.docker.internal:host-gateway"]` — see docker-compose.yml.
+#
+# Default YAMS port map (adjust if you changed them in YAMS config):
+#   Jellyfin    8096   jellyfin.redpandacreations.co.uk
+#   Sonarr      8989   sonarr.redpandacreations.co.uk
+#   Radarr      7878   radarr.redpandacreations.co.uk
+#   Prowlarr    9696   prowlarr.redpandacreations.co.uk
+#   qBittorrent 8080   qbit.redpandacreations.co.uk
+#   Jellyseerr  5055   jellyseerr.redpandacreations.co.uk
 
 http:
-  routers: {}
-  services: {}
+  routers:
+    jellyfin:
+      rule: "Host(`jellyfin.redpandacreations.co.uk`)"
+      entryPoints:
+        - websecure
+      middlewares:
+        - authelia@file
+        - security-headers-private@file
+      service: jellyfin
+
+    sonarr:
+      rule: "Host(`sonarr.redpandacreations.co.uk`)"
+      entryPoints:
+        - websecure
+      middlewares:
+        - authelia@file
+        - security-headers-private@file
+      service: sonarr
+
+    radarr:
+      rule: "Host(`radarr.redpandacreations.co.uk`)"
+      entryPoints:
+        - websecure
+      middlewares:
+        - authelia@file
+        - security-headers-private@file
+      service: radarr
+
+    prowlarr:
+      rule: "Host(`prowlarr.redpandacreations.co.uk`)"
+      entryPoints:
+        - websecure
+      middlewares:
+        - authelia@file
+        - security-headers-private@file
+      service: prowlarr
+
+    qbittorrent:
+      rule: "Host(`qbit.redpandacreations.co.uk`)"
+      entryPoints:
+        - websecure
+      middlewares:
+        - authelia@file
+        - security-headers-private@file
+        - qbit-headers@file
+      service: qbittorrent
+
+    jellyseerr:
+      rule: "Host(`jellyseerr.redpandacreations.co.uk`)"
+      entryPoints:
+        - websecure
+      middlewares:
+        - authelia@file
+        - security-headers-private@file
+      service: jellyseerr
+
+  services:
+    jellyfin:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:8096"
+        passHostHeader: true
+
+    sonarr:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:8989"
+        passHostHeader: true
+
+    radarr:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:7878"
+        passHostHeader: true
+
+    prowlarr:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:9696"
+        passHostHeader: true
+
+    qbittorrent:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:8080"
+        passHostHeader: true
+
+    jellyseerr:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:5055"
+        passHostHeader: true
+
+  middlewares:
+    # qBittorrent's web UI blocks requests that don't carry the correct Host header.
+    # Explicitly set it so the upstream sees the right value after Traefik rewrites it.
+    qbit-headers:
+      headers:
+        customRequestHeaders:
+          X-Forwarded-Host: "qbit.redpandacreations.co.uk"

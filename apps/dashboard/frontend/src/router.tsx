@@ -5,6 +5,7 @@ import { JobDetailPage } from './pages/JobDetailPage'
 import { KnowledgePage } from './pages/KnowledgePage'
 import { KnowledgeDetailPage } from './pages/KnowledgeDetailPage'
 import { MedicationPage } from './pages/MedicationPage'
+import { MedicationDetailPage } from './pages/MedicationDetailPage'
 
 export function AppRouter() {
   return (
@@ -15,6 +16,7 @@ export function AppRouter() {
       <Route path="/knowledge" element={<KnowledgePage />} />
       <Route path="/knowledge/:id" element={<KnowledgeDetailPage />} />
       <Route path="/medication" element={<MedicationPage />} />
+      <Route path="/medication/:id" element={<MedicationDetailPage />} />
     </Routes>
   )
 }
