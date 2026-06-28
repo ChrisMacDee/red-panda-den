@@ -1,0 +1,160 @@
+{{!< default}}
+
+{{#post}}
+
+{{#has tag="portfolio"}}
+  {{!-- ── Portfolio item ────────────────────────────────────────────────── --}}
+
+  <div class="container">
+    <div class="portfolio-detail-header">
+      <a href="{{@site.url}}portfolio/" class="section-link" style="display:inline-block;margin-bottom:16px;">← Back to portfolio</a>
+      {{#has tag="portfolio-puppet"}}
+        <span class="pill pill--puppet">Puppet</span>
+      {{else}}
+        <span class="pill pill--software">Software</span>
+      {{/has}}
+      <h1>{{title}}</h1>
+      <p class="portfolio-detail-header__desc">{{excerpt words="30"}}</p>
+    </div>
+
+    <div class="portfolio-detail-grid">
+      {{!-- Main content --}}
+      <div class="portfolio-detail-main">
+        {{#has tag="portfolio-puppet"}}
+          {{#if feature_image}}
+            <img class="puppet-hero" src="{{img_url feature_image size="l"}}" alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}">
+          {{/if}}
+        {{else}}
+          {{#if feature_image}}
+            <img class="software-hero" src="{{img_url feature_image size="l"}}" alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}">
+          {{/if}}
+        {{/has}}
+
+        <div class="post-body">{{content}}</div>
+      </div>
+
+      {{!-- Sidebar --}}
+      <aside class="portfolio-detail-sidebar">
+        <div class="info-panel">
+          <p class="info-panel__heading">Details</p>
+          <div class="info-panel__rows">
+            <div class="info-panel__row">
+              <span class="info-panel__label">Year</span>
+              <span class="info-panel__value">{{date published_at format="YYYY"}}</span>
+            </div>
+            {{#has tag="portfolio-puppet"}}
+              <div class="info-panel__row">
+                <span class="info-panel__label">Type</span>
+                <span class="info-panel__value">
+                  {{#has tag="hand-rod"}}Hand &amp; Rod{{/has}}
+                  {{#has tag="live-hands"}}Live Hands{{/has}}
+                </span>
+              </div>
+            {{else}}
+              {{#if tags}}
+                <div class="info-panel__row">
+                  <span class="info-panel__label">Stack</span>
+                  <span class="info-panel__value">
+                    <div class="tech-tags" style="justify-content:flex-end;">
+                      {{#foreach tags}}
+                        {{#unless (match slug "portfolio" "portfolio-puppet" "portfolio-software")}}
+                          <span class="pill pill--tech">{{name}}</span>
+                        {{/unless}}
+                      {{/foreach}}
+                    </div>
+                  </span>
+                </div>
+              {{/if}}
+            {{/has}}
+          </div>
+        </div>
+
+        {{#has tag="portfolio-puppet"}}
+          <a href="{{@site.url}}contact/?subject=commission" class="btn btn--primary" style="width:100%;justify-content:center;">
+            Commission something similar →
+          </a>
+        {{/has}}
+
+        {{!-- Build log link: Ghost bookmark card renders in content automatically --}}
+        {{!-- Authors link the build log via a Ghost bookmark card in the editor --}}
+      </aside>
+    </div>
+  </div>
+
+{{else}}
+  {{!-- ── Blog post ────────────────────────────────────────────────────── --}}
+
+  <article>
+    <div class="container--narrow">
+      <header class="post-header">
+        <div class="post-header__meta">
+          {{#has tag="puppet-build"}}
+            <span class="pill pill--puppet-build">Puppet Build</span>
+          {{else}}
+            {{#has tag="tutorial"}}
+              <span class="pill pill--tutorial">Tutorial</span>
+            {{else}}
+              <span class="pill pill--news">News</span>
+            {{/has}}
+          {{/has}}
+          <span class="post-header__date">{{date published_at format="DD MMM YYYY"}}</span>
+          <span class="post-header__reading-time">{{reading_time}}</span>
+        </div>
+        <h1>{{title}}</h1>
+      </header>
+    </div>
+
+    {{#if feature_image}}
+      <div class="container">
+        <img class="post-hero-image" src="{{img_url feature_image size="l"}}" alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}">
+      </div>
+    {{/if}}
+
+    <div class="container">
+      <div class="post-layout">
+        <div>
+          <div class="post-body">
+            {{content}}
+          </div>
+
+          <footer class="post-footer">
+            {{#if tags}}
+              <div class="post-footer__tags">
+                {{#foreach tags}}
+                  <a href="{{url}}" class="post-footer__tag"># {{name}}</a>
+                {{/foreach}}
+              </div>
+            {{/if}}
+          </footer>
+        </div>
+
+        {{!-- Table of contents (JS-generated from headings) --}}
+        <aside class="post-toc" id="post-toc">
+          <p class="post-toc__heading">Contents</p>
+          <nav class="post-toc__list" id="toc-list">
+            {{!-- Populated by JS --}}
+          </nav>
+        </aside>
+      </div>
+    </div>
+  </article>
+
+  {{!-- Related posts --}}
+  {{#get "posts" filter="tag:-portfolio+id:-{{id}}" limit="3" order="published_at desc"}}
+    {{#if posts}}
+      <div class="container">
+        <section class="related-posts">
+          <h2>More posts</h2>
+          <div class="post-grid">
+            {{#foreach posts}}
+              {{> post-card}}
+            {{/foreach}}
+          </div>
+        </section>
+      </div>
+    {{/if}}
+  {{/get}}
+
+{{/has}}
+
+{{/post}}

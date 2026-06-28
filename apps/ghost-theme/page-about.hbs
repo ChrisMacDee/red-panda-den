@@ -1,0 +1,70 @@
+{{!< default}}
+
+<div class="container" style="padding-top:64px;padding-bottom:96px;">
+
+  {{!-- Intro --}}
+  <section class="about-intro">
+    <div>
+      <div class="about-photo about-photo--placeholder">
+        {{#if @page.feature_image}}
+          <img src="{{img_url @page.feature_image size="l"}}" alt="Chris MacDee" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-lg);">
+        {{else}}
+          Photo coming soon
+        {{/if}}
+      </div>
+    </div>
+    <div class="about-bio">
+      <h1>Hi, I'm Chris.</h1>
+      <p>I make Henson-style puppets by hand and build software when I'm not elbow-deep in foam. Based in the UK, I've been making things — physical and digital — for as long as I can remember.</p>
+      <p>My puppets are built in the tradition of Jim Henson's workshop: hand & rod puppets like Kermit and Gonzo, and live-hands puppets like Cookie Monster. Every piece is unique and made to commission.</p>
+      <p>On the software side, I build whatever interests me — from personal life management tools to self-hosted infrastructure. This very site runs on a Raspberry Pi in my hallway.</p>
+      <div class="hero__actions" style="justify-content:flex-start;margin-top:32px;">
+        <a href="{{@site.url}}contact/?subject=commission" class="btn btn--primary">Commission a puppet</a>
+        <a href="{{@site.url}}portfolio/" class="btn btn--outline">See my work</a>
+      </div>
+    </div>
+  </section>
+
+  {{!-- Disciplines --}}
+  <h2 style="margin-bottom:24px;">What I make</h2>
+  <div class="about-disciplines">
+    <div class="discipline-card">
+      <div class="discipline-card__icon">🎭</div>
+      <h3 class="discipline-card__title">Henson-style Puppets</h3>
+      <p class="discipline-card__desc">Hand &amp; rod puppets (Kermit, Gonzo style) and live-hands puppets (Cookie Monster, Swedish Chef style). Built from foam, fleece, and a lot of patience.</p>
+    </div>
+    <div class="discipline-card">
+      <div class="discipline-card__icon">💻</div>
+      <h3 class="discipline-card__title">Software &amp; Web Dev</h3>
+      <p class="discipline-card__desc">Full-stack web applications, self-hosted services, and whatever rabbit hole I fell into this week. TypeScript, React, Node.js, Docker — the usual suspects.</p>
+    </div>
+  </div>
+
+  {{!-- Commission process --}}
+  <h2 style="margin-bottom:8px;">How a commission works</h2>
+  <p class="text-muted" style="margin-bottom:40px;">From first message to finished puppet, here's what to expect.</p>
+  <div class="process-steps">
+    <div class="process-step">
+      <div class="process-step__number">1</div>
+      <h4 class="process-step__title">Get in touch</h4>
+      <p class="process-step__desc">Tell me what you're after. Character reference, style, size, intended use — the more detail the better.</p>
+    </div>
+    <div class="process-step">
+      <div class="process-step__number">2</div>
+      <h4 class="process-step__title">Discuss &amp; quote</h4>
+      <p class="process-step__desc">We'll work out the details and I'll give you a quote. Deposit required before build begins.</p>
+    </div>
+    <div class="process-step">
+      <div class="process-step__number">3</div>
+      <h4 class="process-step__title">Build &amp; check in</h4>
+      <p class="process-step__desc">I'll build your puppet and send progress photos at key stages. Your feedback shapes the final piece.</p>
+    </div>
+    <div class="process-step">
+      <div class="process-step__number">4</div>
+      <h4 class="process-step__title">Delivery</h4>
+      <p class="process-step__desc">Final payment, then your puppet is carefully packed and shipped. A build log post goes up on the blog.</p>
+    </div>
+  </div>
+
+  {{> commission-strip}}
+</div>

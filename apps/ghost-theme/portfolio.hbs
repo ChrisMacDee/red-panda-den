@@ -1,0 +1,29 @@
+{{!< default}}
+
+<div class="page-header">
+  <div class="container">
+    <h1>Portfolio</h1>
+    <p class="page-header__sub">Puppets made to commission and software built for the love of it.</p>
+  </div>
+</div>
+
+<div class="container">
+  {{#get "posts" filter="tag:portfolio" limit="all" order="published_at desc"}}
+    {{#if posts}}
+      <div class="portfolio-filter" role="tablist">
+        <button class="filter-btn is-active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="puppet">Puppets</button>
+        <button class="filter-btn" data-filter="software">Software</button>
+      </div>
+      <div class="portfolio-grid">
+        {{#foreach posts}}
+          {{> portfolio-card}}
+        {{/foreach}}
+      </div>
+    {{else}}
+      <p class="text-muted text-center mt-8">Portfolio pieces coming soon.</p>
+    {{/if}}
+  {{/get}}
+
+  {{> commission-strip}}
+</div>

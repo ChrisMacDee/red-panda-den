@@ -166,6 +166,8 @@ services:
       mail__from: ${GHOST_MAIL_FROM:-noreply@redpandacreations.co.uk}
     volumes:
       - ghost_content:/var/lib/ghost/content
+      - ../apps/ghost-theme:/var/lib/ghost/content/themes/red-panda-creations:ro
+      - ../apps/ghost-theme/routes.yaml:/var/lib/ghost/content/settings/routes.yaml:ro
     networks:
       - proxy
     labels:

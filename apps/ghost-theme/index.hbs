@@ -1,0 +1,30 @@
+{{!< default}}
+
+<div class="page-header">
+  <div class="container">
+    <h1>Blog</h1>
+    <p class="page-header__sub">Puppet builds, tutorials, news &amp; reviews.</p>
+  </div>
+</div>
+
+<div class="container">
+  {{#if posts}}
+    {{! Category filter }}
+    <div class="portfolio-filter" role="tablist">
+      <button class="filter-btn is-active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="puppet-build">Puppet Builds</button>
+      <button class="filter-btn" data-filter="tutorial">Tutorials</button>
+      <button class="filter-btn" data-filter="news">News &amp; Reviews</button>
+    </div>
+
+    <div class="post-grid">
+      {{#foreach posts}}
+        {{> post-card}}
+      {{/foreach}}
+    </div>
+
+    {{pagination}}
+  {{else}}
+    <p class="text-muted text-center mt-8">No posts yet. Check back soon.</p>
+  {{/if}}
+</div>

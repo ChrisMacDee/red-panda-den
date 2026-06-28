@@ -1,0 +1,23 @@
+{{!< default}}
+
+<div class="page-header">
+  <div class="container">
+    {{#tag}}
+      <h1>{{name}}</h1>
+      {{#if description}}<p class="page-header__sub">{{description}}</p>{{/if}}
+    {{/tag}}
+  </div>
+</div>
+
+<div class="container">
+  {{#if posts}}
+    <div class="post-grid">
+      {{#foreach posts}}
+        {{> post-card}}
+      {{/foreach}}
+    </div>
+    {{pagination}}
+  {{else}}
+    <p class="text-muted text-center mt-8">No posts in this category yet.</p>
+  {{/if}}
+</div>

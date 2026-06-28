@@ -1,0 +1,55 @@
+<header class="site-header">
+  <div class="container">
+    <div class="site-header__inner">
+
+      <a href="{{@site.url}}" class="site-header__brand">
+        {{#if @site.logo}}
+          <img class="site-header__logo" src="{{@site.logo}}" alt="{{@site.title}}" width="36" height="36">
+        {{/if}}
+        <span class="site-header__wordmark text-mono">{{@site.title}}</span>
+      </a>
+
+      <nav class="site-header__nav" aria-label="Main navigation">
+        <ul class="site-header__nav-links">
+          <li><a class="nav-link {{#if (is "index")}}is-active{{/if}}" href="{{@site.url}}portfolio/">Portfolio</a></li>
+          <li><a class="nav-link {{#if (is "index")}}is-active{{/if}}" href="{{@site.url}}blog/">Blog</a></li>
+          <li><a class="nav-link {{#if (is "page" slug="about")}}is-active{{/if}}" href="{{@site.url}}about/">About</a></li>
+          <li><a class="nav-link {{#if (is "page" slug="contact")}}is-active{{/if}}" href="{{@site.url}}contact/">Contact</a></li>
+        </ul>
+
+        <div class="site-header__actions">
+          <button class="theme-toggle" data-theme-toggle aria-label="Toggle colour scheme">
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+          <a href="{{@site.url}}contact/?subject=commission" class="btn btn--primary btn--sm">Commission me</a>
+        </div>
+      </nav>
+
+      <button class="nav-burger" data-nav-toggle aria-expanded="false" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-nav" data-mobile-nav>
+  <div class="mobile-nav__panel">
+    <div class="mobile-nav__header">
+      <a href="{{@site.url}}" class="site-header__brand">
+        {{#if @site.logo}}
+          <img class="site-header__logo" src="{{@site.logo}}" alt="{{@site.title}}" width="36" height="36">
+        {{/if}}
+        <span class="site-header__wordmark text-mono">{{@site.title}}</span>
+      </a>
+      <button class="mobile-nav__close" data-nav-close aria-label="Close menu">✕</button>
+    </div>
+    <ul class="mobile-nav__links">
+      <li><a class="mobile-nav__link" href="{{@site.url}}portfolio/">Portfolio</a></li>
+      <li><a class="mobile-nav__link" href="{{@site.url}}blog/">Blog</a></li>
+      <li><a class="mobile-nav__link" href="{{@site.url}}about/">About</a></li>
+      <li><a class="mobile-nav__link" href="{{@site.url}}contact/">Contact</a></li>
+    </ul>
+    <a href="{{@site.url}}contact/?subject=commission" class="btn btn--primary" style="width:100%;justify-content:center;">Commission me</a>
+  </div>
+</div>
