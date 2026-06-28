@@ -21,6 +21,17 @@ A public-facing portfolio and blog for **Chris MacDee** — puppet maker and sof
 
 The tone is warm, personal, and craftsperson-led — not a corporate agency. Think independent maker who takes their work seriously and has a genuine personality.
 
+### Photography (placeholders for now)
+
+Real photography will be shot once puppets are complete. The designer should use placeholder images sized to the correct ratios. When shooting, Chris will produce:
+
+- **Character portraits** — puppet posed expressively, styled lighting, personality-forward (think press shots). Used as hero/card images.
+- **Technical shots** — clean front view + side view against a neutral background. Used on portfolio detail pages for reference.
+- **Detail/material shots** — close-ups of foam work, fabric, mechanism, eyes. Used inside build logs.
+- **In-use shots** — puppet being operated, at events, etc. Used for blog and About page.
+
+All placeholder slots should assume portrait orientation (2:3 ratio) for puppet character shots and landscape (16:9 or 3:2) for build process and detail shots.
+
 ---
 
 ## 3. Brand Identity
@@ -243,32 +254,60 @@ Bottom bar: `© 2026 Red Panda Creations · Made with too much caffeine` — sma
 
 **Intent:** List of all posts. Ghost handles pagination.
 
+#### Content categories — three distinct types, each needing a visual signal:
+
+| Category | Ghost tag | Description | Visual cue |
+|----------|-----------|-------------|------------|
+| **Puppet Build** | `puppet-build` | Editorial build logs — the story of making a specific puppet. Long, image-heavy, narrative-driven. Often linked from the portfolio detail page for that puppet. | Warm amber/craft pill |
+| **Tutorial** | `tutorial` | Technical how-to content: puppetry techniques, coding walkthroughs, step-by-step builds. Has numbered steps, images, possibly code blocks. | Crimson pill |
+| **News & Reviews** | `news` | Casual, conversational — opinions, reviews of materials/tools, event recaps, general ramblings. | Neutral grey pill |
+
+Category pills should be visually distinct from each other (not all crimson) so readers can scan the blog feed and self-select.
+
 #### Layout:
-- **Page header:** `"Blog"` + descriptor
-- **Featured post** (top, full-width): large image, title, date, reading time, excerpt, `"Read →"` button
+- **Page header:** `"Blog"` + descriptor. Category filter row below header: `All` · `Puppet Builds` · `Tutorials` · `News & Reviews`
+- **Featured post** (top, full-width): large hero image, category pill, title, date, reading time, excerpt, `"Read →"` button
 - **Post grid:** 2-column below (desktop), 1-column (mobile)
-- Post card: thumbnail (16:9), category tag, title, date, reading time, excerpt snippet, author avatar (32px logo mark)
-- Tags as crimson pills
+- Post card: thumbnail (16:9), category pill, title, date, reading time, 2-line excerpt
 - Pagination: numbered, minimal
 
 ---
 
 ### 6.5 Blog Post Page (`/blog/:slug`)
 
-**Intent:** Individual post reading experience.
+**Intent:** Individual post reading experience. The template adapts slightly by category.
 
 #### Layout:
-- **Header:** Category tag, `h1` title, date · reading time · author
+- **Header:** Category pill, `h1` title, date · reading time · author
 - **Hero image:** Full-width below header, max `600px` tall, `object-fit: cover`
 - **Content column:** Max `720px` wide, centred — optimised for reading
   - Body: 18px Plus Jakarta Sans, `1.75` line-height
   - Headings: crimson accent left-border on `h2`
   - Blockquotes: left border crimson, italic, `bg-secondary` background
-  - Code blocks: JetBrains Mono, `bg-tertiary`, syntax-highlighted
+  - Code blocks: JetBrains Mono, `bg-tertiary`, syntax-highlighted (tutorials will have many of these)
   - Images: full-width within column, rounded `8px`
-- **Sidebar (desktop only, sticky):** Table of contents auto-generated from headings
+  - Image galleries: 2-column grid within the column (build logs will have many process photos)
+- **Sidebar (desktop only, sticky):** Table of contents auto-generated from headings — important for long tutorials and build logs
 - **Footer:** Tags · Share buttons (copy link, optional socials) · `"More posts →"`
 - **Related posts:** 3-card strip below article
+
+#### Category-specific variations to design:
+
+**Puppet Build post** — link panel at top connecting to the portfolio piece this build documents. e.g. `"This is the build log for [Puppet Name] — view the finished piece →"`. Styled as a crimson-tinted callout card, not just a text link. These are editorial/narrative — prioritise image galleries and pull-quotes.
+
+**Tutorial post** — numbered step callouts (styled `Step 1`, `Step 2` markers, visually prominent). Code blocks likely. Possibly a materials/tools list at the top (styled like a recipe ingredients block).
+
+**News & Review post** — no special UI chrome. Straight prose. Relaxed, no sidebar needed on short posts (sidebar only appears if post is >1500 words or has 3+ headings).
+
+---
+
+### 6.5a Puppet Detail Page — Build Log Link
+
+On the puppet portfolio detail page (section 6.3), add a **"Build story" panel** below the main details:
+
+- If a build log post exists for this puppet: show a linked card — thumbnail, `"Puppet Build"` pill, post title (e.g. `"How I built Clarence"`), reading time, `"Read the full build →"` button
+- If no build log yet: hide this section (Ghost conditional template logic handles this)
+- Style: matches the blog post card but slightly more prominent — it's contextually important here
 
 ---
 
@@ -315,7 +354,10 @@ The designer should produce a component sheet covering:
 | Project card — Puppet | Default · Hover |
 | Project card — Software | Default · Hover |
 | Blog post card | Default · Hover · Featured variant |
-| Category / tag pill | Crimson (active) · Grey (inactive) · Hover |
+| Category pill — Puppet Build | Default · Hover |
+| Category pill — Tutorial | Default · Hover |
+| Category pill — News & Review | Default · Hover |
+| Tag pill (generic) | Default · Hover |
 | CTA Button — filled | Default · Hover · Focus · Disabled |
 | CTA Button — outline | Default · Hover · Focus |
 | Text link | Default · Hover · Visited |
@@ -326,7 +368,10 @@ The designer should produce a component sheet covering:
 | Section heading + link | — |
 | Dark/light mode toggle | Light · Dark |
 | Pagination | — |
-| Tag pill | — |
+| Build log link card (portfolio detail) | Has build log · No build log (hidden) |
+| Tutorial step marker (`Step N`) | — |
+| Materials / tools list block | — |
+| Image gallery (2-col, within post) | — |
 
 ---
 
