@@ -1,0 +1,10 @@
+{
+  "name": "red-panda-creations",
+  "description": "Red Panda Creations Ghost Theme",
+  "version": "1.0.0",
+  "engines": {
+    "ghost": ">=5.0.0"
+  },
+  "license": "MIT",
+  "keywords": ["ghost", "theme", "blog", "portfolio", "puppets"]
+}

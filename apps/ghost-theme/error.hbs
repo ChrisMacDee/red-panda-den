@@ -1,0 +1,12 @@
+{{!< default}}
+
+<div class="container">
+  <div class="error-page">
+    <div>
+      <p class="error-page__code">{{statusCode}}</p>
+      <h1>{{#if (eq statusCode 404)}}Page not found.{{else}}Something went wrong.{{/if}}</h1>
+      <p>{{#if (eq statusCode 404)}}That page doesn't seem to exist. Maybe it moved, or maybe it never existed.{{else}}An unexpected error occurred. Sorry about that.{{/if}}</p>
+      <a href="{{@site.url}}" class="btn btn--primary">← Back to home</a>
+    </div>
+  </div>
+</div>

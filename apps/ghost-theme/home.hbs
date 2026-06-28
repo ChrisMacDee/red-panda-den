@@ -1,0 +1,78 @@
+{{!< default}}
+
+{{! Hero }}
+<section class="hero">
+  <div class="container">
+    <div class="hero__inner">
+      {{#if @site.logo}}
+        <img class="hero__logo" src="{{@site.logo}}" alt="{{@site.title}}" width="96" height="96">
+      {{/if}}
+      <h1 class="hero__headline">Puppet maker<br>&amp; developer.</h1>
+      <p class="hero__sub">I build Henson-style puppets to commission and software for fun. Based in the UK.</p>
+      <div class="hero__actions">
+        <a href="{{@site.url}}contact/?subject=commission" class="btn btn--primary">Commission a puppet →</a>
+        <a href="{{@site.url}}portfolio/" class="btn btn--outline">See my work</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{! What I Make }}
+<section class="section">
+  <div class="container">
+    <div class="feature-grid">
+      <a href="{{@site.url}}portfolio/#puppets" class="feature-card" style="text-decoration:none;color:inherit;">
+        <div class="feature-card__image--placeholder feature-card__image">Puppet photography coming soon</div>
+        <div class="feature-card__body">
+          <h3 class="feature-card__title">Henson-style Puppets</h3>
+          <p class="feature-card__desc">Hand & rod and live-hands puppets, handcrafted to commission. Kermit style, Cookie Monster style, or something entirely original.</p>
+          <span class="section-link">See puppet work →</span>
+        </div>
+      </a>
+      <a href="{{@site.url}}portfolio/#software" class="feature-card" style="text-decoration:none;color:inherit;">
+        <div class="feature-card__image--placeholder feature-card__image">Software &amp; web projects</div>
+        <div class="feature-card__body">
+          <h3 class="feature-card__title">Software &amp; Web</h3>
+          <p class="feature-card__desc">Custom applications, self-hosted infrastructure, and web projects. Built with care and an obsessive attention to detail.</p>
+          <span class="section-link">See dev projects →</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+{{! Recent Portfolio }}
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Recent work</h2>
+      <a href="{{@site.url}}portfolio/" class="section-link">View all →</a>
+    </div>
+    {{#get "posts" filter="tag:portfolio" limit="3" order="published_at desc"}}
+      <div class="portfolio-grid">
+        {{#foreach posts}}
+          {{> portfolio-card}}
+        {{/foreach}}
+      </div>
+    {{/get}}
+  </div>
+</section>
+
+{{! Blog Teaser }}
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>From the blog</h2>
+      <a href="{{@site.url}}blog/" class="section-link">Read all →</a>
+    </div>
+    {{#get "posts" filter="tag:-portfolio" limit="4" order="published_at desc"}}
+      <div class="post-grid">
+        {{#foreach posts}}
+          {{> post-card}}
+        {{/foreach}}
+      </div>
+    {{/get}}
+  </div>
+</section>
+
+{{> commission-strip}}
