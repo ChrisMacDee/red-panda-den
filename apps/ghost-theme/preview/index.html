@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Home — Red Panda Creations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+
+<!-- Header -->
+<header class="site-header is-scrolled">
+  <div class="container">
+    <div class="site-header__inner">
+      <a href="/" class="site-header__brand">
+        <img class="site-header__logo" src="logo.png" alt="Red Panda Creations" width="36" height="36">
+        <span class="site-header__wordmark text-mono">Red Panda Creations</span>
+      </a>
+      <nav class="site-header__nav" aria-label="Main navigation">
+        <ul class="site-header__nav-links">
+          <li><a class="nav-link" href="portfolio.html">Portfolio</a></li>
+          <li><a class="nav-link" href="blog.html">Blog</a></li>
+          <li><a class="nav-link" href="#">About</a></li>
+          <li><a class="nav-link" href="#">Contact</a></li>
+        </ul>
+        <div class="site-header__actions">
+          <button class="theme-toggle" data-theme-toggle aria-label="Toggle colour scheme">
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+          <a href="#" class="btn btn--primary btn--sm">Commission me</a>
+        </div>
+      </nav>
+      <button class="nav-burger" data-nav-toggle aria-expanded="false" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile nav -->
+<div class="mobile-nav" data-mobile-nav>
+  <div class="mobile-nav__panel">
+    <div class="mobile-nav__header">
+      <a href="/" class="site-header__brand">
+        <img class="site-header__logo" src="logo.png" alt="Red Panda Creations" width="36" height="36">
+        <span class="site-header__wordmark text-mono">Red Panda Creations</span>
+      </a>
+      <button class="mobile-nav__close" data-nav-close>✕</button>
+    </div>
+    <ul class="mobile-nav__links">
+      <li><a class="mobile-nav__link" href="portfolio.html">Portfolio</a></li>
+      <li><a class="mobile-nav__link" href="blog.html">Blog</a></li>
+      <li><a class="mobile-nav__link" href="#">About</a></li>
+      <li><a class="mobile-nav__link" href="#">Contact</a></li>
+    </ul>
+    <a href="#" class="btn btn--primary" style="width:100%;justify-content:center;">Commission me</a>
+  </div>
+</div>
+
+<main>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero__inner">
+        <img class="hero__logo" src="logo.png" alt="Red Panda Creations" width="96" height="96">
+        <h1 class="hero__headline">Puppet maker<br>&amp; developer.</h1>
+        <p class="hero__sub">I build Henson-style puppets to commission and software for fun. Based in the UK.</p>
+        <div class="hero__actions">
+          <a href="#" class="btn btn--primary">Commission a puppet →</a>
+          <a href="portfolio.html" class="btn btn--outline">See my work</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What I Make -->
+  <section class="section">
+    <div class="container">
+      <div class="feature-grid">
+        <a href="portfolio.html" class="feature-card" style="text-decoration:none;color:inherit;">
+          <div class="feature-card__image--placeholder feature-card__image" style="height:240px;display:flex;align-items:center;justify-content:center;">
+            <span style="font-size:4rem;">🎭</span>
+          </div>
+          <div class="feature-card__body">
+            <h3 class="feature-card__title">Henson-style Puppets</h3>
+            <p class="feature-card__desc">Hand &amp; rod and live-hands puppets, handcrafted to commission. Kermit style, Cookie Monster style, or something entirely original.</p>
+            <span class="section-link">See puppet work →</span>
+          </div>
+        </a>
+        <a href="portfolio.html" class="feature-card" style="text-decoration:none;color:inherit;">
+          <div class="feature-card__image--placeholder feature-card__image" style="height:240px;display:flex;align-items:center;justify-content:center;">
+            <span style="font-size:4rem;">💻</span>
+          </div>
+          <div class="feature-card__body">
+            <h3 class="feature-card__title">Software &amp; Web</h3>
+            <p class="feature-card__desc">Custom applications, self-hosted infrastructure, and web projects. Built with care and an obsessive attention to detail.</p>
+            <span class="section-link">See dev projects →</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Portfolio -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Recent work</h2>
+        <a href="portfolio.html" class="section-link">View all →</a>
+      </div>
+      <div class="portfolio-grid">
+
+        <article class="portfolio-card portfolio-card--puppet" data-category="puppet">
+          <a href="post.html">
+            <div class="portfolio-card__image" style="aspect-ratio:2/3;background:linear-gradient(135deg,#3D1520,#1A1A1A);display:flex;align-items:center;justify-content:center;font-size:3rem;">🎭</div>
+          </a>
+          <div class="portfolio-card__body">
+            <div class="portfolio-card__meta">
+              <span class="pill pill--puppet">Puppet</span>
+              <span class="post-card__date">2026</span>
+            </div>
+            <h3 class="portfolio-card__title"><a href="post.html">Clarence the Bear</a></h3>
+            <p class="portfolio-card__desc">A hand &amp; rod puppet in the style of Fozzie Bear — soft fleece body, foam head, hand-punched hair.</p>
+          </div>
+        </article>
+
+        <article class="portfolio-card portfolio-card--software" data-category="software">
+          <a href="#">
+            <div class="portfolio-card__image" style="aspect-ratio:16/9;background:linear-gradient(135deg,#0C0C0C,#242424);display:flex;align-items:center;justify-content:center;font-size:3rem;">🖥️</div>
+          </a>
+          <div class="portfolio-card__body">
+            <div class="portfolio-card__meta">
+              <span class="pill pill--software">Software</span>
+              <span class="post-card__date">2026</span>
+            </div>
+            <h3 class="portfolio-card__title"><a href="#">Red Panda Den</a></h3>
+            <p class="portfolio-card__desc">Self-hosted life management platform running on a Raspberry Pi 5.</p>
+            <div class="tech-tags">
+              <span class="pill pill--tech">React</span>
+              <span class="pill pill--tech">TypeScript</span>
+              <span class="pill pill--tech">Docker</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="portfolio-card portfolio-card--puppet" data-category="puppet">
+          <a href="#">
+            <div class="portfolio-card__image" style="aspect-ratio:2/3;background:linear-gradient(135deg,#1A3D1A,#0C1A0C);display:flex;align-items:center;justify-content:center;font-size:3rem;">🐸</div>
+          </a>
+          <div class="portfolio-card__body">
+            <div class="portfolio-card__meta">
+              <span class="pill pill--puppet">Puppet</span>
+              <span class="post-card__date">2025</span>
+            </div>
+            <h3 class="portfolio-card__title"><a href="#">Gerald the Frog</a></h3>
+            <p class="portfolio-card__desc">A hand &amp; rod puppet — green fleece, foam-sculpted head, ping-pong ball eyes.</p>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog Teaser -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2>From the blog</h2>
+        <a href="blog.html" class="section-link">Read all →</a>
+      </div>
+      <div class="post-grid">
+
+        <article class="post-card post-card--featured">
+          <div class="post-card__image post-card__image--placeholder" style="background:linear-gradient(135deg,#3D1520,#1A1A1A);width:50%;min-height:280px;display:flex;align-items:center;justify-content:center;font-size:4rem;">🎭</div>
+          <div class="post-card__body">
+            <div class="post-card__meta">
+              <span class="pill pill--puppet-build">Puppet Build</span>
+              <span class="post-card__date">28 Jun 2026</span>
+              <span class="post-card__reading-time">12 min read</span>
+            </div>
+            <h3 class="post-card__title"><a href="post.html">Building Clarence: Foam, Fleece &amp; a Lot of Hot Glue</a></h3>
+            <p class="post-card__excerpt">The full story of building my first hand &amp; rod puppet — from rough foam carve to finished character ready for his close-up.</p>
+          </div>
+        </article>
+
+        <article class="post-card">
+          <div class="post-card__image post-card__image--placeholder" style="background:var(--bg-tertiary);aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;font-size:2.5rem;">📖</div>
+          <div class="post-card__body">
+            <div class="post-card__meta">
+              <span class="pill pill--tutorial">Tutorial</span>
+              <span class="post-card__date">14 Jun 2026</span>
+              <span class="post-card__reading-time">8 min read</span>
+            </div>
+            <h3 class="post-card__title"><a href="#">How to carve a puppet head from L200 foam</a></h3>
+            <p class="post-card__excerpt">L200 is the gold standard for Muppet-style puppet heads. Here's how I carve and shape it.</p>
+          </div>
+        </article>
+
+        <article class="post-card">
+          <div class="post-card__image post-card__image--placeholder" style="background:var(--bg-tertiary);aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;font-size:2.5rem;">💬</div>
+          <div class="post-card__body">
+            <div class="post-card__meta">
+              <span class="pill pill--news">News</span>
+              <span class="post-card__date">2 Jun 2026</span>
+              <span class="post-card__reading-time">4 min read</span>
+            </div>
+            <h3 class="post-card__title"><a href="#">Six months in: what I've learned about puppet making</a></h3>
+            <p class="post-card__excerpt">Half a year of foam, fleece, and watching every Jim Henson documentary I could find. Here's what stuck.</p>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Commission Strip -->
+  <div class="container">
+    <section class="commission-strip">
+      <h2 class="commission-strip__heading">Want a custom puppet?</h2>
+      <p class="commission-strip__text">Whether it's a Kermit-style hand puppet, a live-hands Cookie Monster, or a character entirely your own — get in touch and let's make something brilliant.</p>
+      <a href="#" class="btn btn--primary">Start your commission →</a>
+    </section>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <div class="site-footer__logo-row">
+          <img class="site-footer__logo" src="logo.png" alt="Red Panda Creations" width="32" height="32">
+          <span class="site-footer__wordmark text-mono">Red Panda Creations</span>
+        </div>
+        <p class="site-footer__tagline">Henson-style puppet maker &amp; software developer, based in the UK.</p>
+      </div>
+      <div>
+        <p class="site-footer__links-heading">Navigate</p>
+        <ul class="site-footer__links">
+          <li><a class="site-footer__link" href="index.html">Home</a></li>
+          <li><a class="site-footer__link" href="portfolio.html">Portfolio</a></li>
+          <li><a class="site-footer__link" href="blog.html">Blog</a></li>
+          <li><a class="site-footer__link" href="#">About</a></li>
+          <li><a class="site-footer__link" href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="site-footer__cta-heading">Commission a puppet</p>
+        <p class="site-footer__cta-text">After a Kermit, a Cookie Monster, or something entirely new? Let's talk.</p>
+        <a href="#" class="btn btn--primary btn--sm">Start a commission →</a>
+      </div>
+    </div>
+    <div class="site-footer__bottom">
+      <p class="site-footer__copy">© 2026 Red Panda Creations · Made with too much caffeine</p>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/theme.js" defer></script>
+</body>
+</html>
